@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5 Monday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e; /* Dark background */
+            --container-bg: #3c424f; /* Slightly lighter container */
+            --text-color: #e8e6e3; /* Light text */
+            --question-text-color: #8ab4f8; /* Light blue for questions */
+            --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+            --border-color: #555; /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+             transition: background-color 0.3s, color 0.3s;
+        }
+         #theme-toggle-button:hover {
+             opacity: 0.8;
+         }
+
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+        
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+             font-weight: bold;
+             color: var(--question-text-color);
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+         .check-button:disabled {
+             background-color: var(--button-disabled-bg);
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+             font-weight: bold;
+             font-size: 1.1em;
+             display: block;
+             margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 5 Monday Practice Quiz</h1>
+
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        const quizData = [
+            // Intro to Neoplasia Questions
+            {
+                learningObjective: "LO1 (Intro to Neoplasia): Define the nomenclature for neoplasia.",
+                question: "A malignant tumor of glandular epithelial origin is best termed an adenocarcinoma. A malignant tumor arising from bone is best termed which of the following?",
+                options: { 
+                    A: "Osteoma", 
+                    B: "Chondrosarcoma", 
+                    C: "Osteosarcoma", 
+                    D: "Myosarcoma" 
+                },
+                correctAnswer: "C",
+                rationale: "Malignant tumors of mesenchymal origin are called sarcomas. The prefix indicates the tissue of origin. Therefore, a malignant tumor of bone (osteo-) is an osteosarcoma. An osteoma is a benign tumor of bone. A chondrosarcoma is a malignant tumor of cartilage.",
+                source: "'Mesenchymal tumors. 'Sarcoma'. Tissue type + 'Sarcoma'. Ex: Osteosarcoma, Chondrosarcoma, Liposarcoma.' (Introduction to Neoplasia, Slide 12)"
+            },
+            {
+                learningObjective: "LO1 (Intro to Neoplasia): Define the nomenclature for neoplasia.",
+                question: "A pathologist examines a mass removed from a patient's ovary. The report describes the mass as containing a mixture of mature tissues derived from all three embryonic germ layers, including skin, hair, teeth, and thyroid tissue. This tumor is best classified as which of the following?",
+                options: { 
+                    A: "Hamartoma", 
+                    B: "Choristoma", 
+                    C: "Teratoma", 
+                    D: "Pleomorphic adenoma" 
+                },
+                correctAnswer: "C",
+                rationale: "A teratoma is a tumor that arises from germ cells and is characterized by the presence of tissues from more than one germ cell layer (ectoderm, mesoderm, and endoderm). A hamartoma is a disorganized collection of tissues indigenous to the site, while a choristoma is normal tissue in an abnormal location.",
+                source: "'Teratoma (dermoid cyst). Arise from germ cell rests that can form elements of all three germ layers i.e. ectoderm, mesoderm and endoderm. Found in the ovary, testes.' (Introduction to Neoplasia, Slide 17)"
+            },
+            {
+                learningObjective: "LO1 (Intro to Neoplasia): Define the nomenclature for neoplasia.",
+                question: "During surgery, a small nodule of normal-appearing pancreatic tissue is found embedded in the wall of the small intestine. This finding, representing normal tissue in an abnormal location, is best defined as a:",
+                options: { 
+                    A: "Hamartoma", 
+                    B: "Metastasis", 
+                    C: "Adenoma", 
+                    D: "Choristoma" 
+                },
+                correctAnswer: "D",
+                rationale: "A choristoma is a mass of histologically normal tissue found in an abnormal location. An example provided is normal pancreas in the small intestine. This is distinct from a hamartoma, which is a disorganized mass of tissues that are native to the site where it is found.",
+                source: "'Choristoma. Normal tissue in an abnormal location... Normal pancreas in small intestine or stomach.' (Introduction to Neoplasia, Slide 18)"
+            },
+            {
+                learningObjective: "LO2 (Intro to Neoplasia): Describe the general properties of benign vs. malignant tumors.",
+                question: "A pathologist is examining a cervical biopsy. The report notes disordered growth, loss of normal cellular orientation and maturation, and nuclear abnormalities. However, all these changes are confined to the epithelium and have not breached the basement membrane. This condition is best described as:",
+                options: { 
+                    A: "Dysplasia", 
+                    B: "Anaplasia", 
+                    C: "Invasive carcinoma", 
+                    D: "Metaplasia" 
+                },
+                correctAnswer: "A",
+                rationale: "Dysplasia is characterized by disordered growth and loss of cellular maturation. When these changes involve the full thickness of the epithelium but do not penetrate the basement membrane, it is also known as carcinoma in situ. It is a pre-malignant condition. Anaplasia refers to a complete lack of differentiation, and invasive carcinoma implies the basement membrane has been breached.",
+                source: "'Dysplasia. Disordered growth. Seen in epithelial lined structures. Loss of normal orientation and maturation. All changes confined to epithelium and no breach of basement membrane.' (Introduction to Neoplasia, Slide 29)"
+            },
+            {
+                learningObjective: "LO2 (Intro to Neoplasia): Describe the general properties of benign vs. malignant tumors.",
+                question: "While several features are used to distinguish between benign and malignant tumors, which of the following is considered the single most reliable and definitive indicator of malignancy?",
+                options: { 
+                    A: "A high rate of growth", 
+                    B: "The presence of numerous, atypical mitotic figures", 
+                    C: "Metastasis", 
+                    D: "Lack of a fibrous capsule" 
+                },
+                correctAnswer: "C",
+                rationale: "Metastasis, the spread of a tumor to sites that are physically discontinuous with the primary tumor, is the hallmark of malignancy. While other features like rapid growth, cellular atypia, and local invasion are strongly associated with malignancy, metastasis is the only feature that is unequivocally diagnostic (with very rare exceptions).",
+                source: "'Metastasis marks a tumor as malignant (Almost always).' (Introduction to Neoplasia, Slide 35)"
+            },
+            {
+                learningObjective: "LO2 (Intro to Neoplasia): Describe the general properties of benign vs. malignant tumors.",
+                question: "A surgeon removes a tumor from a patient's breast. On gross examination, the tumor is described as having ill-defined, 'infiltrative' margins that blend into the surrounding tissue. This gross appearance is most characteristic of which type of tumor?",
+                options: { 
+                    A: "A benign tumor", 
+                    B: "A malignant tumor", 
+                    C: "A hamartoma", 
+                    D: "A choristoma" 
+                },
+                correctAnswer: "B",
+                rationale: "Malignant tumors are characterized by local invasion and typically have an infiltrative appearance on gross examination, with poorly defined margins. In contrast, benign tumors are usually well-circumscribed and encapsulated, giving them well-defined margins.",
+                source: "'Malignant tumors often invade surrounding tissue. Grossly have an infiltrative appearance.' (Introduction to Neoplasia, Slide 32) and 'Malignant: ill-defined... 'infiltrative'' (Introduction to Neoplasia, Slide 33)"
+            },
+            {
+                learningObjective: "LO3 (Intro to Neoplasia): Explain the clinical presentation, staging, and grading of cancer.",
+                question: "A patient with newly diagnosed colon cancer is undergoing evaluation. The oncologist explains that the 'stage' of the cancer will be determined. The AJCC staging system is based on the TNM classification. What do the letters T, N, and M represent?",
+                options: { 
+                    A: "Tumor size, Number of mitoses, Morphology", 
+                    B: "Tissue type, Nodal status, Molecular markers", 
+                    C: "Tumor size/extent, Nodal involvement, Metastasis", 
+                    D: "Tumor grade, Necrosis, Metastasis" 
+                },
+                correctAnswer: "C",
+                rationale: "The TNM staging system is the international standard for classifying the extent of spread of cancer. 'T' refers to the size and/or extent of the primary tumor, 'N' refers to the extent of spread to regional lymph nodes, and 'M' refers to the presence or absence of distant metastasis.",
+                source: "'TNM staging. Tumor, Node, Metastasis.' (Introduction to Neoplasia, Slide 42)"
+            },
+            {
+                learningObjective: "LO3 (Intro to Neoplasia): Explain the clinical presentation, staging, and grading of cancer.",
+                question: "A pathologist's report for a breast cancer specimen includes a 'Nottingham grade'. What does the tumor grade primarily describe?",
+                options: { 
+                    A: "The size of the primary tumor", 
+                    B: "The number of lymph nodes involved", 
+                    C: "The microscopic appearance and degree of differentiation of the tumor cells", 
+                    D: "The presence of distant metastases" 
+                },
+                correctAnswer: "C",
+                rationale: "Cancer grading is distinct from staging. Grading refers to the microscopic appearance of the tumor cells, specifically their degree of differentiation (how much they resemble normal cells) and other histologic features. Staging, in contrast, describes the anatomical extent and spread of the tumor.",
+                source: "'Cancer Grading. Grade usually refers to the microscopic appearance of the tumor cells.' (Introduction to Neoplasia, Slide 47)"
+            },
+            {
+                learningObjective: "LO3 (Intro to Neoplasia): Explain the clinical presentation, staging, and grading of cancer.",
+                question: "A 45-year-old man presents to his physician with several months of unexplained fevers, drenching night sweats, and a 20-pound weight loss. These systemic symptoms are often associated with certain malignancies, particularly lymphoma, and are collectively referred to as:",
+                options: { 
+                    A: "Paraneoplastic syndrome", 
+                    B: "Carcinoid syndrome", 
+                    C: "'A symptoms'", 
+                    D: "'B symptoms'" 
+                },
+                correctAnswer: "D",
+                rationale: "The classic triad of unexplained fever, night sweats, and significant weight loss is known as 'B symptoms'. Their presence is an important part of the clinical presentation and staging for certain cancers, especially Hodgkin and non-Hodgkin lymphomas.",
+                source: "'Symptoms. 'B symptoms' (Fever, night sweats, etc).' (Introduction to Neoplasia, Slide 40)"
+            },
+            // Genetic Testing for Familial Cancer Syndromes Questions
+            {
+                learningObjective: "LO1 (Genetic Testing): Identify the three ‘red flags’ that indicate possible hereditary cancer predisposition.",
+                question: "A physician is taking a family history. Which of the following scenarios is the strongest 'red flag' for a potential hereditary cancer syndrome?",
+                options: { 
+                    A: "A grandfather who was a heavy smoker and developed lung cancer at age 78.", 
+                    B: "A woman diagnosed with breast cancer at age 35, whose mother had ovarian cancer at age 48.", 
+                    C: "A father who had a single basal cell skin cancer removed at age 65.", 
+                    D: "Two distant cousins who both developed prostate cancer in their 80s." 
+                },
+                correctAnswer: "B",
+                rationale: "Key red flags for hereditary cancer include an early age of onset (breast cancer at 35) and a pattern of related cancers in the family (breast and ovarian cancer, characteristic of HBOC syndrome). The other options describe cancers at an advanced age or sporadic types not typically part of a familial pattern.",
+                source: "Source: This is a synthesis of principles shown throughout the presentation. The contrast between Sporadic (single cell, acquired) and Hereditary (all cells, inherited) and the pedigree diagrams demonstrate that multiple affected relatives with related cancers at young ages are hallmarks of hereditary syndromes. (Genetic Testing for Familial Cancer Syndromes, Slides 4, 5, 21, 52)"
+            },
+             {
+                learningObjective: "LO1 (Genetic Testing): Identify the three ‘red flags’ that indicate possible hereditary cancer predisposition.",
+                question: "A 58-year-old woman is diagnosed with endometrial cancer. Her medical history is significant for a previous diagnosis of colon cancer at age 49. This patient's history of having two different primary cancers is a red flag for a hereditary syndrome. This feature is best described as:",
+                options: { 
+                    A: "Variable expressivity", 
+                    B: "Incomplete penetrance", 
+                    C: "Multiple primary tumors", 
+                    D: "Familial clustering" 
+                },
+                correctAnswer: "C",
+                rationale: "Having multiple primary tumors in a single individual is a significant indicator of a possible underlying genetic predisposition. In this case, the combination of colon and endometrial cancer is highly suggestive of Lynch syndrome.",
+                source: "Source: General principle of hereditary cancer evaluation. The provided slides for Lynch syndrome list both colorectal and endometrial cancer as key lesions, making the development of both in one person a major red flag. (Genetic Testing for Familial Cancer Syndromes, Slide 21, 55)"
+            },
+             {
+                learningObjective: "LO1 (Genetic Testing): Identify the three ‘red flags’ that indicate possible hereditary cancer predisposition.",
+                question: "A 28-year-old man is diagnosed with medullary thyroid cancer. He is the first person in his family to have this diagnosis. While family history is a key red flag, the presence of a rare tumor type, even without a known family history, can also be an indicator of a hereditary syndrome. This is because:",
+                options: { 
+                    A: "Rare tumors are always hereditary.", 
+                    B: "Certain rare tumors are strongly associated with specific germline mutations (e.g., RET in MEN2).", 
+                    C: "Rare tumors are more likely to be caused by environmental exposures.", 
+                    D: "All individuals with rare tumors will eventually develop a positive family history." 
+                },
+                correctAnswer: "B",
+                rationale: "Some tumor types, while rare in the general population, are the hallmark manifestations of specific hereditary cancer syndromes. For example, medullary thyroid cancer is very strongly associated with pathogenic variants in the RET gene (Multiple Endocrine Neoplasia type 2). Therefore, the diagnosis itself serves as a red flag for genetic testing.",
+                source: "Source: General principle of hereditary cancer evaluation, supported by the table listing Medullary thyroid cancer as the cancer for the FMTC, MEN2 syndrome linked to the RET gene. (Genetic Testing for Familial Cancer Syndromes, Slide 8, 56)"
+            },
+            {
+                learningObjective: "LO2 (Genetic Testing): Identify the most common types of cancers seen in Hereditary Breast and Ovarian Cancer (HBOC) syndrome and Lynch syndrome.",
+                question: "A patient with a pathogenic germline variant in a mismatch repair (MMR) gene, such as MLH1, is diagnosed with Lynch syndrome. In addition to a very high lifetime risk of colorectal cancer, women with Lynch syndrome have a significantly increased risk for which other cancer?",
+                options: { 
+                    A: "Lung cancer", 
+                    B: "Melanoma", 
+                    C: "Endometrial cancer", 
+                    D: "Sarcoma" 
+                },
+                correctAnswer: "C",
+                rationale: "Lynch syndrome is defined by pathogenic variants in mismatch repair genes. While it is the most common cause of hereditary colorectal cancer, the most common extracolonic cancer in women with Lynch syndrome is endometrial cancer.",
+                source: "'Lynch Syndrome... CRC, EC* [Endometrial cancer], urothelial, ovarian...' (Genetic Testing for Familial Cancer Syndromes, Slide 9) and 'Comparison... Lynch Syndrome: Colorectal, endometrial' (Genetic Testing for Familial Cancer Syndromes, Slide 55)"
+            },
+            {
+                learningObjective: "LO2 (Genetic Testing): Identify the most common types of cancers seen in Hereditary Breast and Ovarian Cancer (HBOC) syndrome and Lynch syndrome.",
+                question: "Hereditary Breast and Ovarian Cancer (HBOC) syndrome is most commonly caused by pathogenic variants in the BRCA1 and BRCA2 genes. The classic cancers associated with this syndrome are breast and ovarian cancer. Which of the following cancers is also part of the HBOC tumor spectrum, particularly with BRCA2 variants?",
+                options: { 
+                    A: "Endometrial cancer", 
+                    B: "Pancreatic cancer", 
+                    C: "Cervical cancer", 
+                    D: "Renal cell carcinoma" 
+                },
+                correctAnswer: "B",
+                rationale: "While breast and ovarian cancers are the most well-known, HBOC syndrome also confers an increased risk for other cancers, including pancreatic cancer and prostate cancer. These are important to consider for surveillance and risk management.",
+                source: "'HBOC SYNDROME... Breast, ovarian, prostate, pancreas' (Genetic Testing for Familial Cancer Syndromes, Slide 55) and 'Lesions in HBOC... Pancreas cancer (BRCA2 > BRCA1...)' (Genetic Testing for Familial Cancer Syndromes, Slide 52)"
+            },
+            {
+                learningObjective: "LO2 (Genetic Testing): Identify the most common types of cancers seen in Hereditary Breast and Ovarian Cancer (HBOC) syndrome and Lynch syndrome.",
+                question: "A 30-year-old woman is diagnosed with Lynch syndrome due to a germline MLH1 mutation. Her increased cancer risk is primarily driven by a defect in which fundamental cellular process?",
+                options: { 
+                    A: "Double-stranded DNA break repair", 
+                    B: "Mismatch repair", 
+                    C: "Nucleotide excision repair", 
+                    D: "Wnt signaling pathway regulation" 
+                },
+                correctAnswer: "B",
+                rationale: "Lynch syndrome is caused by inherited mutations in genes responsible for mismatch repair (MMR), a critical process for correcting errors that occur during DNA replication. A defect in this system leads to the accumulation of mutations (microsatellite instability) and a high risk for certain cancers, particularly colorectal and endometrial.",
+                source: "'LYNCH SYNDROME. Mismatch repair defect.' (Genetic Testing for Familial Cancer Syndromes, Slide 42)"
+            },
+            {
+                learningObjective: "LO3 (Genetic Testing): Describe the difference between the following three variants: Pathogenic, Variant of Uncertain Significance, and Benign.",
+                question: "A patient receives a genetic test report that identifies a 'Variant of Uncertain Significance' (VUS) in the MSH2 gene. What is the most appropriate next step in clinical management based on this result?",
+                options: { 
+                    A: "Proceed with a prophylactic colectomy, as this is likely the cause of Lynch syndrome.", 
+                    B: "Treat the VUS as benign and recommend average-risk cancer screening.", 
+                    C: "Inform the patient that the VUS is not clinically actionable and base screening recommendations on their personal and family history alone.", 
+                    D: "Immediately test all first-degree relatives for the same VUS." 
+                },
+                correctAnswer: "C",
+                rationale: "A VUS is a DNA change for which there is insufficient evidence to determine if it is associated with disease risk. Therefore, it cannot be used for clinical decision-making. Management should not be altered based on a VUS; instead, it should rely on established risk factors like personal and family history.",
+                source: "'CLASSIFICATION... Uncertain significance (VUS).' (Genetic Testing for Familial Cancer Syndromes, Slide 46). The definition implies it is not actionable."
+            },
+            {
+                learningObjective: "LO3 (Genetic Testing): Describe the difference between the following three variants: Pathogenic, Variant of Uncertain Significance, and Benign.",
+                question: "A genetic testing laboratory classifies a variant in the BRCA1 gene as 'Pathogenic' according to ACMG guidelines. This classification indicates that the variant:",
+                options: { 
+                    A: "Has a 50% chance of being disease-causing.", 
+                    B: "Is a common polymorphism with no effect on health.", 
+                    C: "Is considered to be disease-causing based on available evidence.", 
+                    D: "Requires further research before it can be used for clinical management." 
+                },
+                correctAnswer: "C",
+                rationale: "The 'Pathogenic' classification is the highest level of certainty for a disease-causing variant. It means that, based on a rigorous evaluation of multiple lines of evidence (e.g., population data, functional studies, segregation data), the variant is determined to be a cause of the associated disorder.",
+                source: "'CLASSIFICATION Pathogenic (P)' (Genetic Testing for Familial Cancer Syndromes, Slide 46)"
+            },
+            {
+                learningObjective: "LO3 (Genetic Testing): Describe the difference between the following three variants: Pathogenic, Variant of Uncertain Significance, and Benign.",
+                question: "A patient with a strong family history of colon cancer undergoes genetic testing. A variant in the APC gene is identified and classified as 'Benign'. How should this finding influence the patient's cancer screening plan?",
+                options: { 
+                    A: "The patient should undergo more frequent colonoscopies because of this finding.", 
+                    B: "The patient's screening plan should be based on their family history, as the benign variant does not confer increased risk.", 
+                    C: "The patient no longer needs colonoscopies as the genetic cause of cancer has been ruled out.", 
+                    D: "The patient should be treated as having a Variant of Uncertain Significance." 
+                },
+                correctAnswer: "B",
+                rationale: "A 'Benign' variant is interpreted as not being associated with an increased risk for disease. It is considered a normal variation. Therefore, this specific genetic finding should not be used to guide clinical care. The patient's management plan should be determined by their other risk factors, such as their strong family history.",
+                source: "The concept is derived from the ACMG classification system shown on slide 46. A 'Benign (B)' variant is at the opposite end of the spectrum from 'Pathogenic (P)'. The implication is that it does not confer risk and should not be used for management."
+            },
+            {
+                learningObjective: "LO4 (Genetic Testing): Explain the use of the following genetics resources: GeneReviews and National Comprehensive Cancer Network (NCCN) Guidelines.",
+                question: "A 45-year-old woman is found to carry a pathogenic variant in the BRCA1 gene. Her physician needs to develop a comprehensive plan for cancer screening and risk reduction. Which of the following resources provides regularly updated, evidence-based clinical practice guidelines for the management of individuals with hereditary cancer syndromes?",
+                options: { 
+                    A: "Wikipedia", 
+                    B: "A medical school textbook from 5 years ago", 
+                    C: "The National Comprehensive Cancer Network (NCCN)", 
+                    D: "The original 1994 publication on the discovery of BRCA1" 
+                },
+                correctAnswer: "C",
+                rationale: "The NCCN provides comprehensive, continuously updated clinical practice guidelines that are considered the standard of care for oncology in the United States. These guidelines include detailed recommendations for risk management, surveillance, and treatment for individuals with hereditary cancer syndromes like HBOC.",
+                source: "'NCCN Clinical Practice Guidelines in Oncology... Genetic/Familial High-Risk Assessment: Breast, Ovarian, Pancreatic, and Prostate.' (Genetic Testing for Familial Cancer Syndromes, Slide 53)"
+            },
+            {
+                learningObjective: "LO4 (Genetic Testing): Explain the use of the following genetics resources: GeneReviews and National Comprehensive Cancer Network (NCCN) Guidelines.",
+                question: "A physician is reviewing the NCCN Guidelines Gene Summary table for BRCA1. According to the provided example, what specific types of information are presented in this table to aid in patient counseling and management?",
+                options: { 
+                    A: "The cost of genetic testing and insurance coverage codes.", 
+                    B: "A list of laboratories that perform the testing.", 
+                    C: "Absolute cancer risk percentages and references to detailed management protocols.", 
+                    D: "Patient testimonials and support group contact information." 
+                },
+                correctAnswer: "C",
+                rationale: "The NCCN Gene Summary tables are designed for clinicians and provide concise, critical information, including the absolute lifetime risks for various associated cancers and direct links or references to the specific management sections within the guidelines (e.g., 'See BRCA Pathogenic Variant-Positive Management').",
+                source: "'Gene Summary: Risks and Management. Primary breast cancer. Absolute risk: 60%-72%. Management: See BRCA Pathogenic Variant-Positive Management.' (Genetic Testing for Familial Cancer Syndromes, Slide 54)"
+            },
+            {
+                learningObjective: "LO4 (Genetic Testing): Explain the use of the following genetics resources: GeneReviews and National Comprehensive Cancer Network (NCCN) Guidelines.",
+                question: "A physician is counseling a patient with a BRCA1 pathogenic variant using the NCCN Guidelines summary table. For which of the following associated cancers does the guideline suggest that management is conditional upon the patient's family history?",
+                options: { 
+                    A: "Primary breast cancer", 
+                    B: "Epithelial ovarian cancer", 
+                    C: "Pancreatic cancer", 
+                    D: "Contralateral breast cancer" 
+                },
+                correctAnswer: "C",
+                rationale: "The NCCN table explicitly states for pancreatic cancer, 'Screen P/LP variant carriers with a family history of pancreatic cancer, see PANC-A.' This indicates that the recommendation for screening is not universal for all BRCA1 carriers but is dependent on the additional risk factor of a family history of that specific cancer.",
+                source: "'Pancreatic cancer... Management: Screen P/LP variant carriers with a family history of pancreatic cancer, see PANC-A.' (Genetic Testing for Familial Cancer Syndromes, Slide 54)"
+            }
+        ];
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                 feedbackHTML = `<span class="feedback-status">Incorrect. The correct answer is ${qData.correctAnswer}.</span>`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+
+    </script>
+
+</body>
+</html>
